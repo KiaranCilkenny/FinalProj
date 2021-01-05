@@ -1,5 +1,5 @@
 import React from 'react';
-import { Movies } from './movies';
+import { Exercises } from './exercises';
 import axios from 'axios';
 
 export class Read extends React.Component {
@@ -10,36 +10,48 @@ export class Read extends React.Component {
     }
 
     state = {
-        movies: []
+        exercises: [],
+        search : ""
     };
 
     ReloadData(){
-        axios.get('http://localhost:4000/api/movies')
+        axios.get('http://localhost:4000/api/exercises') //Retrieves data from database
             .then((response) => {
-                this.setState({ movies: response.data })
+                this.setState({ exercises: response.data })
             })
             .catch((error) => {
                 console.log(error)
             });
     }
+
 
     componentDidMount() {
-        axios.get('http://localhost:4000/api/movies')
+        axios.get('http://localhost:4000/api/exercises')
             .then((response) => {
-                this.setState({ movies: response.data })
+                this.setState({ exercises: response.data })
             })
             .catch((error) => {
                 console.log(error)
             });
     }
 
-    render() {
+    onChange = e =>{
+        this.setState({ search : e.target.value });
+    }
+
+    render (){
+    const { exercises, search} = this.state;
+    const muscleSearch = exercises.filter( exercise =>{
+        return exercise.Title.toLowerCase().indexOf( search.toLowerCase()) !== -1
+    } )
+
+
         return (
             <div>
-                <h1>This is the read component.</h1>
-                <Movies movies={this.state.movies} ReloadData={this.ReloadData}></Movies>
+                {/* //searchbar */}
+                <input style={{ margin: '2rem'}} class="Search Exercise" icon="search" onChange={this.onChange} placeholder="Search Exercise"/>  {/*Placeholder wont change? */}
+                <Exercises exercises={muscleSearch} ReloadData={this.ReloadData}></Exercises>
             </div>
         );
     }
 }
-

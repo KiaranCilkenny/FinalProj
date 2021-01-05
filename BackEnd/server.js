@@ -4,6 +4,7 @@ const port = 4000
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require('path');
 
 
 app.use(cors());
@@ -15,73 +16,79 @@ app.use(function (req, res, next) {
     next();
 });
 
+app.use(express.static(path.join(__dirname, '../build')));
+app.use('/static', express.static(path.join(__dirname, 'build/static')));
+
 // parse application/x-www-form-urlencoded
+// Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
 
-const strConnection = 'mongodb+srv://admin:admin@cluster0.hrgmz.mongodb.net/MyFilms?retryWrites=true&w=majority';
+const strConnection = 'mongodb+srv://Ciaran:mufc4ever@cluster0.dlmz4.mongodb.net/MyFilms?retryWrites=true&w=majority';
 mongoose.connect(strConnection, {useNewUrlParser: true});
 
 const Schema = mongoose.Schema;
-const movieSchema = new Schema({
+const exerciseSchema = new Schema({
     Title:String,
-    Year:String,
-    Poster:String
+    Muscle:String,
+    Poster:String,
 })
 
-const movieModel = mongoose.model('film', movieSchema);
+const exerciseModel = mongoose.model('exercise', exerciseSchema);
 
+//Listening for get request from domain
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-app.get('/api/movies', (req, res) => {
+//Changed the url to return that parameter
+app.get('/api/exercises', (req, res) => {
     
-    movieModel.find((err,data)=>{
+    exerciseModel.find((err,data)=>{
         res.json(data);
     })
-    //         "Poster": "https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg"
-    //         "Poster": "https://m.media-amazon.com/images/M/MV5BMjQ0MTgyNjAxMV5BMl5BanBnXkFtZTgwNjUzMDkyODE@._V1_SX300.jpg"
+    
     
 })
 
-app.get('/api/movies/:id',(req, res)=>{
+//Retrieves data from url
+app.get('/api/exercises/:id',(req, res)=>{
 
     console.log(req.params.id);
 
-    movieModel.findById(req.params.id, (err,data)=>{
+    exerciseModel.findById(req.params.id, (err,data)=>{
         res.json(data);
     })
 })
 
-app.put('/api/movies/:id',(req,res)=>{
+app.put('/api/exercises/:id',(req,res)=>{
     console.log("Update "+req.params.id);
 
-    movieModel.findByIdAndUpdate(req.params.id,
+    exerciseModel.findByIdAndUpdate(req.params.id,
         req.body,
         (err,data)=>{
             res.status(201).send(data);
         })
 })
 
-app.delete('/api/movies/:id', (req, res)=>{
+app.delete('/api/exercises/:id', (req, res)=>{
     console.log(req.params.id);
 
-    movieModel.findByIdAndDelete({_id:req.params.id},
+    exerciseModel.findByIdAndDelete({_id:req.params.id},
          (err, data)=>{
         res.send(data);
     })
 })
 
 
-app.post('/api/movies', (req, res) => {
+app.post('/api/exercises', (req, res) => {
     console.log(req.body);
 
-    movieModel.create({
+    exerciseModel.create({
         Title:req.body.Title,
-        Year:req.body.Year,
+        Muscle:req.body.Muscle,
         Poster:req.body.Poster
     })
     .then()
@@ -90,6 +97,10 @@ app.post('/api/movies', (req, res) => {
     res.send('Data Recieved!');
 })
 
+//Retrieves data from index.html file by using 'path'
+app.get('*', (req,res)=>{
+    res.sendFile(path.join(__dirname+'/../build/index.html'));
+})
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })

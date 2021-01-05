@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  background-color: slategray;
 }
 
 .App-logo {
@@ -26,6 +27,33 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.Push {
+  display: flex;
+  justify-content: center;
+}
+
+.form-group{
+  background-color: slategray;
+  padding-bottom: 60px;
+}
+
+.form-control{
+  background-color: slategray;
+  
+}
+
+.table{
+ padding-bottom: 80px; 
+ justify-content: center;
+ align-items: center;
+ flex-direction: column;
+ padding-right: 55px;
+}
+
+.mr-auto{
+padding-right: "30rem";
 }
 
 @keyframes App-logo-spin {

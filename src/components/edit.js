@@ -4,16 +4,18 @@ import axios from 'axios';
 export class Edit extends React.Component {
 
     constructor() {
-        super();
+        super();    //Calls on the component of the parent class
 
+        //Binding my event handlers so i can call on them later in other events below
         this.onSubmit = this.onSubmit.bind(this);
         this.onChangeTitle = this.onChangeTitle.bind(this);
-        this.onChangeYear = this.onChangeYear.bind(this);
+        this.onChangeMuscle = this.onChangeMuscle.bind(this);
         this.onChangePoster = this.onChangePoster.bind(this);
 
+        //declaring my array
         this.state = {
             Title: '',
-            Year: '',
+            Muscle: '',
             Poster: ''
         }
     }
@@ -21,11 +23,12 @@ export class Edit extends React.Component {
     componentDidMount(){
         console.log("load "+this.props.match.params.id);
 
-        axios.get('http://localhost:4000/api/movies/'+this.props.match.params.id)
+        //retrieves data from database
+        axios.get('http://localhost:4000/api/exercises/'+this.props.match.params.id)
         .then((response)=>{
             this.setState({
                 Title:response.data.Title,
-                Year:response.data.Year,
+                Muscle:response.data.Muscle,
                 Poster:response.data.Poster,
                 _id:response.data._id
             })
@@ -41,9 +44,9 @@ export class Edit extends React.Component {
         });
     }
 
-    onChangeYear(e) {
+    onChangeMuscle(e) {
         this.setState({
-            Year: e.target.value
+            Muscle: e.target.value
         });
     }
     onChangePoster(e) {
@@ -53,21 +56,19 @@ export class Edit extends React.Component {
     }
 
     onSubmit(e) {
-        e.preventDefault();
-        alert("Movie: " + this.state.Title + " "
-            + this.state.Year + " " +
+        e.preventDefault();    //Stops from calling this button mutliple times
+        alert("Exercise: " + this.state.Title + " "
+            + this.state.Muscle + " " +
             this.state.Poster);
 
-            const newMovie ={
+            const newExercise ={
                 Title:this.state.Title,
-                Year:this.state.Year,
+                Muscle:this.state.Muscle,
                 Poster:this.state.Poster
             };
-
-        // axios.post('http://localhost:4000/api/movies', newMovie)
-        // .then(response => console.log(response.data))
-        // .catch(error => console.log(error));    
-            axios.put('http://localhost:4000/api/movies/'+this.state._id, newMovie)
+            
+            //Updates data from database 
+            axios.put('http://localhost:4000/api/exercises/'+this.state._id, newExercise)
             .then((xyz)=>{
                 console.log(xyz);
             })
@@ -78,24 +79,25 @@ export class Edit extends React.Component {
 
     render() {
         return (
+            <container>
             <div className='App'>
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
-                        <label>Add Movie Title: </label>
+                        <label>Add Exercise Title: </label>
                         <input type='text'
                             className='form-control'
                             value={this.state.Title}
                             onChange={this.onChangeTitle}></input>
                     </div>
                     <div className="form-group">
-                        <label>Add Movie Year: </label>
+                        <label>Add Muscle Group: </label>
                         <input type='text'
                             className='form-control'
-                            value={this.state.Year}
-                            onChange={this.onChangeYear}></input>
+                            value={this.state.Muscle}
+                            onChange={this.onChangeMuscle}></input>
                     </div>
                     <div className='form-group'>
-                        <label>Movies Poster: </label>
+                        <label>Diagram: </label>
                         <textarea type='text'
                             className='form-control'
                             value={this.state.Poster}
@@ -106,11 +108,12 @@ export class Edit extends React.Component {
 
                     <div className="form-group">
                         <input type='submit'
-                            value='Edit Movie'
-                            className='btn btn-primary'></input>
+                            value='Edit Exercise'
+                            className='btn btn-warning'></input>
                     </div>
                 </form>
             </div>
+            </container>
         );
     }
 }
